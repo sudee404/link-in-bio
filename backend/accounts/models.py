@@ -52,6 +52,8 @@ class MyUser(AbstractBaseUser):
     user_permissions = models.ManyToManyField(Permission, blank=True)
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     updated_at = models.DateTimeField(auto_now=True,null=True)
+    
+    USERNAME_FIELD = 'email'
   
     objects = MyUserManager()
 
