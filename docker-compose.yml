@@ -1,0 +1,48 @@
+services:
+  web:
+    env_file:
+      - ./backend/.env
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/usr/src/app
+    depends_on:
+      - db
+    networks:
+      - bio_net
+  frontend:
+    env_file:
+      - ./frontend/.env
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./frontend:/usr/src/app
+    ports:
+      - 3000:3000
+    networks:
+      - bio_net  
+  db:
+    image: postgres:13.1-alpine
+    environment:
+      POSTGRES_DB: 'bio'
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: '12345'
+    volumes:
+      - bio_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    networks:
+      - bio_net
+  
+networks:
+  bio_net:
+    driver: bridge
+volumes:
+  bio_data:
+  media:
+
+
