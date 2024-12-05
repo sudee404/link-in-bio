@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'accounts'
+    'django_filters',
+    'accounts',
+    'home'
 ]
 
 MIDDLEWARE = [
@@ -120,7 +122,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
 
     ],
-    'DEFAULT_PAGINATION_CLASS': 'backend_settings.pagination.CustomPagination',
+    'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomPagination',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'PAGE_SIZE': 10
 }
