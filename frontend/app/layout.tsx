@@ -2,6 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { AOSInit } from "@/components/aos-init";
 import Providers from "./providers";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,10 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <AOSInit />
-      <body className={inter.className} suppressHydrationWarning>
-        <Providers> {children}</Providers>
-      </body>
+      <ThemeProvider>
+        <AOSInit />
+        <body className={inter.className} suppressHydrationWarning>
+          <Providers> {children}</Providers>
+        </body>
+      </ThemeProvider>
     </html>
   );
 }

@@ -56,6 +56,7 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
         "link": "0.75rem",
+        "button": "0.5rem", // Added for button rounded corners
       },
       keyframes: {
         "accordion-down": {
@@ -80,4 +81,3 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")],
 }
-
