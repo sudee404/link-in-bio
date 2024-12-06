@@ -1,133 +1,239 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { Mail } from 'lucide-react'
-import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import Link from "next/link";
+import { Mail } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
+import axios from "axios";
+import { signIn } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export function SignUpForm() {
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  async function onSubmit(event: React.FormEvent) {
-    event.preventDefault()
-    setIsLoading(true)
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpInput>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      account_type: "personal",
+      business_name: "",
+    },
+  });
 
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
-  }
+  const account_type = watch("account_type");
+
+  const onSubmit = async (data: SignUpInput) => {
+    let formData: Partial<SignUpInput> = {
+      email: data.email,
+      password: data.password,
+      account_type: data.account_type,
+    };
+
+    if (data.account_type === "business") {
+      formData.business_name = data.business_name;
+    }
+    setIsLoading(true);
+
+    await axios
+      .post("/api/auth/register", formData)
+      .then((res) => {
+        toast.success("Account created successfully");
+        // signIn 
+        signIn("django-provider", {
+          email: data.email,
+          password: data.password,
+          redirect: true,
+          callbackUrl: "/dashboard",
+        });
+      })
+      .catch((err) => {
+              Object.entries(err?.response?.data?.errors || {}).forEach(([key, value]) => {
+                toast.error(`${key}: ${value}`);
+              });
+              console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-8 items-center p-8">
-      <div className="space-y-6">
-        <div>
-          <Link href="/" className="text-2xl font-bold text-blue-500">
-            autofyle
-          </Link>
-        </div>
-        <div>
-          <h2 className="text-2xl font-semibold mb-2">
-            Authorized dealer and distributor network onboarding
-          </h2>
-          <p className="text-gray-600">
-            More than 5000 authorized dealers and distributors have chosen AutoFyle to grow their businesses using our intelligent suite of applications
-          </p>
-        </div>
-        <div className="relative w-64 h-64">
-          <img 
-            src="/placeholder.svg?height=256&width=256" 
-            alt="Handshake illustration"
-            className="w-full h-full object-contain"
-          />
-        </div>
-      </div>
-      <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Create Your Account
-            </h1>
-            <Link href="/login" className="text-sm text-blue-500 hover:underline">
-              Already have an account?
-            </Link>
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-white dark:bg-gray-900">
+      <div className="w-full max-w-6xl bg-white dark:bg-gray-900 rounded-lg sm:rounded-card shadow-xl overflow-hidden">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 items-center">
+          {/* Left side - Hero section */}
+          <div className="space-y-6 sm:space-y-8 p-6 sm:p-12 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 h-full">
+            <div>
+              <Link
+                href="/"
+                className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400"
+              >
+                LinkFolio
+              </Link>
+            </div>
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">
+                Authorized dealer and distributor network onboarding
+              </h2>
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
+                More than 5000 authorized dealers and distributors have chosen
+                LinkFolio to grow their businesses using our intelligent suite
+                of applications
+              </p>
+            </div>
+            <div className="relative w-60 h-60 sm:w-80 sm:h-80 mx-auto">
+              <img
+                src="/img/handshake.svg?height=256&width=256"
+                alt="Handshake illustration"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
-          <form onSubmit={onSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email Address
-              </label>
-              <Input
-                id="email"
-                placeholder="name@example.com"
-                type="email"
-                autoCapitalize="none"
-                autoComplete="email"
-                autoCorrect="off"
-                disabled={isLoading}
-                icon={<Mail className="h-4 w-4" />}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
-                Password
-              </label>
-              <Input
-                id="password"
-                type="password"
-                disabled={isLoading}
-                required
-              />
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label htmlFor="accountType" className="text-sm font-medium">
-                  Account Type
-                </label>
-                <Select
-                  id="accountType"
-                  disabled={isLoading}
-                  required
+
+          {/* Right side - Form section */}
+          <div className="p-6 sm:p-12 bg-white dark:bg-gray-900">
+            <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:space-y-8">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+                <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
+                  Create Your Account
+                </h1>
+                <Link
+                  href="/login"
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                 >
-                  <option value="">Select Account Type</option>
-                  <option value="employee">Employee</option>
-                  <option value="dealer">Dealer</option>
-                  <option value="distributor">Distributor</option>
-                </Select>
+                  Already have an account?
+                </Link>
               </div>
-              <div className="space-y-2">
-                <label htmlFor="company" className="text-sm font-medium">
-                  Your Company
-                </label>
-                <Input
-                  id="company"
-                  placeholder="Company name"
-                  disabled={isLoading}
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="email"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Email Address
+                  </label>
+                  <Input
+                    {...register("email")}
+                    id="email"
+                    placeholder="name@example.com"
+                    type="email"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    autoCorrect="off"
+                    disabled={isSubmitting || isLoading}
+                    icon={<Mail className="h-4 w-4" />}
+                    required
+                    className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="password"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Password
+                  </label>
+                  <Input
+                    {...register("password")}
+                    id="password"
+                    type="password"
+                    disabled={isSubmitting || isLoading}
+                    required
+                    className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="account_type"
+                      className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Account Type
+                    </label>
+                    <Select
+                      {...register("account_type")}
+                      id="account_type"
+                      disabled={isSubmitting || isLoading}
+                      required
+                      className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                    >
+                      <option value="personal">Personal</option>
+                      <option value="business">Business</option>
+                    </Select>
+                    {errors.account_type && (
+                      <p className="text-red-500 text-sm">
+                        {errors.account_type.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {account_type === "business" && (
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="company"
+                        className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        Your Company
+                      </label>
+                      <Input
+                        {...register("business_name")}
+                        id="company"
+                        placeholder="Company name"
+                        disabled={isSubmitting || isLoading}
+                        required
+                        className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      />
+                      {errors.business_name && (
+                        <p className="text-red-500 text-sm">
+                          {errors.business_name.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <Checkbox
+                  aria-label="By clicking 'Sign Up' you agree to our Terms and Privacy Policy"
                   required
+                  className="text-blue-600 dark:text-blue-400"
                 />
-              </div>
+                <button
+                  type="submit"
+                  className={cn(
+                    "w-full rounded-md bg-blue-600 dark:bg-blue-500 px-4 py-2.5 sm:py-3 text-sm font-semibold text-white transition-all hover:bg-blue-700 dark:hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 hover:shadow-lg",
+                    (isSubmitting || isLoading) && "opacity-50 cursor-wait"
+                  )}
+                  disabled={isSubmitting || isLoading}
+                >
+                  {isSubmitting || isLoading ? "Signing up..." : "Sign Up"}
+                </button>
+              </form>
             </div>
-            <Checkbox
-              aria-label="By clicking 'Sign Up' you agree to our Terms and Privacy Policy"
-              required
-            />
-            <button
-              type="submit"
-              className={cn(
-                "w-full rounded-md bg-blue-500 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-                isLoading && "opacity-50 cursor-wait"
-              )}
-              disabled={isLoading}
-            >
-              {isLoading ? "Signing up..." : "Sign Up"}
-            </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
