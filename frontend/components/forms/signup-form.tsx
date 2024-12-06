@@ -11,12 +11,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
 import axios from "axios";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function SignUpForm() {
+  const {status} = useSession()
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const router = useRouter();
+  
   const {
     register,
     handleSubmit,
@@ -69,6 +74,13 @@ export function SignUpForm() {
       });
   };
 
+
+  React.useEffect(() => {
+    if (status === "authenticated") {
+      router.push(callbackUrl);
+    }
+  }, [status]);
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-white dark:bg-gray-900">
       <div className="w-full max-w-6xl bg-white dark:bg-gray-900 rounded-lg sm:rounded-card shadow-xl overflow-hidden">
@@ -110,7 +122,7 @@ export function SignUpForm() {
                   Create Your Account
                 </h1>
                 <Link
-                  href="/login"
+                  href={`/register?callbackUrl=${callbackUrl}`}
                   className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                 >
                   Already have an account?
