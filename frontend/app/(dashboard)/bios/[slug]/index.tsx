@@ -4,8 +4,10 @@ import { Fragment, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import BioPage from "@/app/[username]/page"
+import Link from "next/link"
+import UserPage from "@/app/[username]"
 
-export default function PreviewPage({params}:{params:any}) {
+export default function PreviewPage({username}:{username:any}) {
   const router = useRouter()
   const [isPublishing, setIsPublishing] = useState(false)
 
@@ -22,16 +24,18 @@ export default function PreviewPage({params}:{params:any}) {
        <div className="mb-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Preview</h1>
           <div className="space-x-4">
-            <Button variant="outline" onClick={() => router.back()}>
-              Back to Editor
+            <Link href={`/bios/${username}/edit`}>
+            <Button variant="outline">
+              Edit
             </Button>
+            </Link>
             <Button onClick={handlePublish} disabled={isPublishing}>
-              {isPublishing ? "Publishing..." : "Publish Changes"}
+              {isPublishing ? "Publishing..." : "Publish"}
             </Button>
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-          <BioPage params={params}/>
+          <UserPage username={username}/>
         </div>
     </Fragment>
   )
