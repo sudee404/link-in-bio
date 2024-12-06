@@ -29,13 +29,13 @@ export default function HeroSection() {
           {session ? (
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
-                href="/account"
+                href="/accounts"
                 className="rounded-md bg-purple-600 dark:bg-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 dark:hover:bg-purple-400 transition-all"
               >
                 Get Started Free
               </Link>
               <Link
-                href="/account/links"
+                href="/accounts/bios"
                 className="text-sm font-semibold text-gray-900 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-all"
               >
                 My Links <span aria-hidden="true">→</span>

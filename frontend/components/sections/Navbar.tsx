@@ -57,7 +57,7 @@ export default function Navbar() {
           <ThemeToggle />
           {session ? (
             <Link
-              href="/account"
+              href="/accounts"
               className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
             >
               Account
@@ -152,7 +152,7 @@ export default function Navbar() {
               ))}
               {session ? (
                 <Link
-                  href="/account"
+                  href="/accounts"
                   className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
                 >
                   Account

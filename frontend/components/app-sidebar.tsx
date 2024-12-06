@@ -40,33 +40,17 @@ const data = {
       isActive: true,
       items:[
         {
-          title: "View Profile",
+          title: "Profile",
           url: "/accounts",
           icon: Frame,
-        }
-      ]
-    },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: Bot,
-      items:[
+        },
         {
-          title: "Edit Profile",
-          url: "/accounts",
+          title: "Business",
+          url: "/accounts/business",
           icon: Frame,
         }
       ]
-    },
-    
-  ],
-  navSec: [
-    {
-      title: "Link in Bio(s)",
-      url: "/accounts/bios",
-      icon: SquareTerminal,
-      isActive: true,
-    },
+    },    
   ],
   projects: [
     {

@@ -29,7 +29,7 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
           <div className="flex justify-between items-center mb-6">
             <Link href="/alexj" className="text-blue-500 hover:underline">View your page</Link>
-            <Link href="/account" className="text-blue-500 hover:underline">Account settings</Link>
+            <Link href="/accounts" className="text-blue-500 hover:underline">Account settings</Link>
           </div>
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Your Links</h2>
