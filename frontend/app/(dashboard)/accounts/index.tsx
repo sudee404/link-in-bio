@@ -1,20 +1,58 @@
-'use client'
-
-import { useState } from 'react'
+"use client";
+import PasswordUpdate from "@/components/forms/password-update";
+import { UserContextContext } from "@/context/UserContext";
+import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function ProfilePage() {
+  const { user: contextData } = useContext(UserContextContext);
+  const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
+
   const [user, setUser] = useState({
-    firstName: "Jamie",
-    lastName: "Jones",
-    email: "jjones@autofyle.com",
-    recoveryEmail: "",
-    username: "jamiejones",
-    avatar: "https://via.placeholder.com/150",
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-    accountType: "Standard", // Added account type field
-  })
+    first_name: "",
+    last_name: "",
+    email: "",
+    recovery_email: "",
+    username: "",
+    image: "https://via.placeholder.com/150",
+    account_type: "personal",
+  });
+
+  const handleSubmit = async () => {
+    setSaving(true);
+    // recreate data without image , username and email
+
+    const { image, username, email, ...rest } = user;
+    const formData = { ...rest };
+
+    await axios.post("/api/auth/profile", formData).then((res) => {
+      toast.success("Profile updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+    }).catch((err) => {
+      console.log(err);
+      toast.error(err.message);
+    }).finally(() => {
+      setSaving(false);
+    });
+
+  }
+  useEffect(() => {
+    // Pre-fill the form with context data
+    if (contextData) {
+      setUser({
+        first_name: contextData?.first_name || "",
+        last_name: contextData?.last_name || "",
+        email: contextData?.email || "",
+        recovery_email: contextData?.recovery_email || "",
+        username: contextData?.username || "",
+        image: contextData?.image || "https://via.placeholder.com/150", // Replace with actual image URL if available
+        account_type: contextData?.account_type || "personal",
+      });
+    }
+  }, [contextData]);
 
   return (
     <div className="shadow-lg border rounded-lg overflow-hidden">
@@ -23,17 +61,21 @@ export default function ProfilePage() {
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="h-24 w-24 rounded-full overflow-hidden border-2 border-white shadow-md">
-              <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+              <img
+                src={user?.image}
+                alt="image"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <button
-              className="absolute bottom-1 right-1 p-2 rounded-full bg-gray-800 text-white"
-            >
+            <button className="absolute bottom-1 right-1 p-2 rounded-full bg-gray-800 text-white">
               <i className="fas fa-camera"></i>
             </button>
           </div>
           <div>
-            <h1 className="text-xl font-bold">{user.firstName} {user.lastName}</h1>
-            <button className="text-blue-500 mt-1">Preview Profile</button>
+            <h1 className="text-xl font-bold">
+              {user?.first_name} {user?.last_name}
+            </h1>
+            <button className="text-blue-500 mt-1" onClick={handleSubmit}>Preview Profile</button>
           </div>
         </div>
       </div>
@@ -44,54 +86,53 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* First Name */}
           <div className="w-full">
-            <label className="text-sm font-medium text-gray-700">First Name</label>
+            <label className="text-sm font-medium text-gray-700">
+              First Name
+            </label>
             <input
               type="text"
-              value={user.firstName}
-              onChange={(e) =>
-                setUser({ ...user, firstName: e.target.value })
-              }
+              value={user?.first_name}
+              onChange={(e) => setUser({ ...user, first_name: e.target.value })}
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
           </div>
 
           {/* Last Name */}
           <div className="w-full">
-            <label className="text-sm font-medium text-gray-700">Last Name</label>
+            <label className="text-sm font-medium text-gray-700">
+              Last Name
+            </label>
             <input
               type="text"
-              value={user.lastName}
-              onChange={(e) =>
-                setUser({ ...user, lastName: e.target.value })
-              }
+              value={user?.last_name}
+              onChange={(e) => setUser({ ...user, last_name: e.target.value })}
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
           </div>
 
           {/* Email */}
           <div className="w-full">
-            <label className="text-sm font-medium text-gray-700">Email Address</label>
+            <label className="text-sm font-medium text-gray-700">
+              Email Address
+            </label>
             <input
               type="email"
-              value={user.email}
-              onChange={(e) =>
-                setUser({ ...user, email: e.target.value })
-              }
+              value={user?.email}
+              onChange={(e) => setUser({ ...user, email: e.target.value })}
               disabled
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
-            <button className="text-blue-500 mt-1">Change</button>
           </div>
 
           {/* Username */}
-          <div className="sm:col-span-2 w-full">
-            <label className="text-sm font-medium text-gray-700">Username</label>
+          <div className="w-full">
+            <label className="text-sm font-medium text-gray-700">
+              Username
+            </label>
             <input
               type="text"
-              value={`https://platform.com/u/${user.username}`}
-              onChange={(e) =>
-                setUser({ ...user, username: e.target.value })
-              }
+              value={user?.username}
+              onChange={(e) => setUser({ ...user, username: e.target.value })}
               disabled
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
@@ -99,84 +140,43 @@ export default function ProfilePage() {
 
           {/* Account Type */}
           <div className="w-full">
-            <label className="text-sm font-medium text-gray-700">Account Type</label>
+            <label className="text-sm font-medium text-gray-700">
+              Account Type
+            </label>
             <select
-              value={user.accountType}
+              value={user?.account_type}
               onChange={(e) =>
-                setUser({ ...user, accountType: e.target.value })
+                setUser({ ...user, account_type: e.target.value })
               }
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             >
-              <option value="Standard">Standard</option>
-              <option value="Premium">Premium</option>
-              <option value="Admin">Admin</option>
+              <option value="business">Business</option>
+              <option value="personal">Personal</option>
             </select>
           </div>
 
           {/* Recovery Email */}
-          <div className="sm:col-span-2 w-full">
-            <label className="text-sm font-medium text-gray-700">Recovery Email Address</label>
+          <div className="w-full">
+            <label className="text-sm font-medium text-gray-700">
+              Recovery Email Address
+            </label>
             <input
               type="email"
-              value={user.recoveryEmail}
+              value={user?.recovery_email}
               onChange={(e) =>
-                setUser({ ...user, recoveryEmail: e.target.value })
+                setUser({ ...user, recovery_email: e.target.value })
               }
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
-            <button className="text-blue-500 mt-1">Save Recovery Email</button>
           </div>
         </div>
+        <button className="mt-4 w-full p-3 bg-blue-500 text-white rounded-lg" disabled={saving} onClick={handleSubmit}>
+          {saving ? "Saving..." : "Save Changes"}
+        </button>
       </div>
 
       {/* Password Update */}
-      <div className="p-6 border-t border-gray-200">
-        <h2 className="text-lg font-semibold">Change Password</h2>
-        
-        {/* Current Password */}
-        <div className="mb-4">
-          <label className="text-sm font-medium text-gray-700">Current Password</label>
-          <input
-            type="password"
-            value={user.currentPassword}
-            onChange={(e) =>
-              setUser({ ...user, currentPassword: e.target.value })
-            }
-            placeholder="Enter your current password"
-            className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
-          />
-        </div>
-
-        {/* New Password */}
-        <div className="mb-4">
-          <label className="text-sm font-medium text-gray-700">New Password</label>
-          <input
-            type="password"
-            value={user.newPassword}
-            onChange={(e) =>
-              setUser({ ...user, newPassword: e.target.value })
-            }
-            placeholder="Enter your new password"
-            className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
-          />
-        </div>
-
-        {/* Confirm New Password */}
-        <div className="mb-4">
-          <label className="text-sm font-medium text-gray-700">Confirm New Password</label>
-          <input
-            type="password"
-            value={user.confirmPassword}
-            onChange={(e) =>
-              setUser({ ...user, confirmPassword: e.target.value })
-            }
-            placeholder="Confirm your new password"
-            className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
-          />
-        </div>
-
-        <button className="mt-4 w-full p-3 bg-blue-500 text-white rounded-lg">Update Password</button>
-      </div>
+      <PasswordUpdate />
     </div>
-  )
+  );
 }
