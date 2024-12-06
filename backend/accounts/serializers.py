@@ -80,3 +80,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+
+class BusinessSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Business
+        fields = ('__all__')
+        

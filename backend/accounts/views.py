@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework import status,viewsets
 from django.contrib.auth import authenticate, get_user_model
-from .serializers import LoginSerializer, UserSerializer, UserRegisterSerializer
+from .models import Business
+from .serializers import LoginSerializer, UserSerializer, UserRegisterSerializer,BusinessSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -69,3 +70,27 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class BusinessViewSet(viewsets.ModelViewSet):
+    queryset = Business.objects.all()
+    serializer_class = BusinessSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    def list(self, request):
+        try:
+            user = request.user
+            serializer = BusinessSerializer(user.business,context={'request': request})
+            return Response({'business':serializer.data},status=status.HTTP_200_OK)
+        except:
+            return Response({'message':'No business profile found'},status=status.HTTP_404_NOT_FOUND)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            user = request.user
+            serializer = self.get_serializer(user.business, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'message':'No business profile found'},status=status.HTTP_404_NOT_FOUND)
+    
