@@ -9,6 +9,9 @@ class LinkInBio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='link_in_bios')
     username = models.SlugField(unique=True,null=True)  # To ensure the unique system-wide username.
     title = models.CharField(max_length=100)  # Microsite title.
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    social_links = models.JSONField(blank=True, null=True)
     type = models.CharField(
         max_length=50,
         choices=[
