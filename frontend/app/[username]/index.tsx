@@ -57,7 +57,7 @@ const mockBioData: BioData = {
   }
 }
 
-export default function BioPage() {
+export default function BioPage({username}:{username:any}) {
   const { name, avatar, socialLinks, links, theme } = mockBioData
 
   return (
