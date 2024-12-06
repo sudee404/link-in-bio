@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { Select, SelectItem, SelectContent, SelectGroup, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -15,14 +15,15 @@ import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export function SignUpForm() {
-  const {status} = useSession()
+  const { status } = useSession()
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const router = useRouter();
-  
+
   const {
     register,
+    setValue,
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
@@ -63,10 +64,10 @@ export function SignUpForm() {
         });
       })
       .catch((err) => {
-              Object.entries(err?.response?.data?.errors || {}).forEach(([key, value]) => {
-                toast.error(`${key}: ${value}`);
-              });
-              console.log(err);
+        Object.entries(err?.response?.data?.errors || {}).forEach(([key, value]) => {
+          toast.error(`${key}: ${value}`);
+        });
+        console.log(err);
       })
       .finally(() => {
         setIsLoading(false);
@@ -183,15 +184,22 @@ export function SignUpForm() {
                     >
                       Account Type
                     </label>
+
                     <Select
-                      {...register("account_type")}
-                      id="account_type"
+                      value={watch("account_type")}
+                      onValueChange={(value:any) => setValue('account_type',value)}
                       disabled={isSubmitting || isLoading}
-                      required
-                      className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-                    >
-                      <option value="personal">Personal</option>
-                      <option value="business">Business</option>
+                      required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Account Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Account Types</SelectLabel>
+                          <SelectItem value="personal">Personal</SelectItem>
+                          <SelectItem value="business">Business</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
                     </Select>
                     {errors.account_type && (
                       <p className="text-red-500 text-sm">
@@ -206,15 +214,15 @@ export function SignUpForm() {
                         htmlFor="company"
                         className="text-sm font-medium text-gray-700 dark:text-gray-300"
                       >
-                        Your Company
+                        Business Name
                       </label>
                       <Input
                         {...register("business_name")}
                         id="company"
-                        placeholder="Company name"
+                        placeholder="Business name"
                         disabled={isSubmitting || isLoading}
                         required
-                        className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 py-6"
+                        className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                       />
                       {errors.business_name && (
                         <p className="text-red-500 text-sm">

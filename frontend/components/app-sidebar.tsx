@@ -31,46 +31,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { UserContextContext } from "@/context/UserContext";
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Accounts",
-      url: "/accounts",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "Profile",
-          url: "/accounts",
-          icon: Frame,
-        },
-        {
-          title: "Business",
-          url: "/accounts/business",
-          icon: Frame,
-        }
-      ]
-    },
-  ],
-  projects: [
-    {
-      name: "Bio 1",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Bio 2",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Bio 3",
-      url: "#",
-      icon: Map,
-    },
-  ],
-};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = React.useContext(UserContextContext)
@@ -113,7 +73,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }]} />
         <NavProjects projects={user?.bios?.map((bio: any) => ({
           name: bio?.username,
-          url: `/accounts/bios/${bio.username}`,
+          url: `/bios/${bio.username}`,
           icon: Frame,
         })) || []} />
       </SidebarContent>
