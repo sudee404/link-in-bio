@@ -60,8 +60,8 @@ const Layout: React.FC<{ children: ReactNode }> = ({ children }) => {
             </Breadcrumb>
           </div>
         </header>
-        <div className="min-h-screen py-12 px-4">
-          <div className="max-w-2xl mx-auto">{children}</div>
+        <div className="min-h-screen py-4">
+          <div className="min-w-fit mx-5">{children}</div>
         </div>
       </SidebarInset>
     </SidebarProvider>
