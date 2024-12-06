@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
