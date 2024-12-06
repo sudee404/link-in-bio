@@ -42,7 +42,7 @@ class LoginView(APIView):
                 refresh = RefreshToken.for_user(user)
                 token = str(refresh.access_token)
                 expiration = refresh.access_token.get('exp')
-                return Response({'user': UserSerializer(user).data, 'accessToken': token, 'exp': expiration}, status=status.HTTP_202_ACCEPTED)
+                return Response({'user': UserSerializer(user).data, 'token': token, 'exp': expiration}, status=status.HTTP_202_ACCEPTED)
 
             if User.objects.filter(email=email).exists():
                 return Response({'message': 'Invalid password'}, status=status.HTTP_401_UNAUTHORIZED)
