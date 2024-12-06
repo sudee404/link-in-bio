@@ -34,41 +34,31 @@ import Link from "next/link";
 const data = {
   navMain: [
     {
-      title: "My Profile",
+      title: "Accounts",
       url: "/accounts",
       icon: SquareTerminal,
       isActive: true,
-      items: [
-        {
-          title: "Edit Profile",
-          url: "/accounts/edit",
-        },
+      items:[
         {
           title: "View Profile",
           url: "/accounts",
-        },
-      ],
+          icon: Frame,
+        }
+      ]
     },
     {
-      title: "Business",
-      url: "/accounts/business",
+      title: "Settings",
+      url: "/settings",
       icon: Bot,
-      items: [
+      items:[
         {
-          title: "View Business",
-          url: "#",
-        },
-        {
-          title: "Edit Business",
-          url: "#",
-        },
-      ],
+          title: "Edit Profile",
+          url: "/accounts",
+          icon: Frame,
+        }
+      ]
     },
-    {
-      title: "My Links",
-      url: "#",
-      icon: BookOpen,
-    },
+    
   ],
   navSec: [
     {

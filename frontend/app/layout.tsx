@@ -2,8 +2,10 @@ import { Inter } from "next/font/google";
 import { AOSInit } from "@/components/aos-init";
 import Providers from "./providers";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
+import { Suspense } from "react";
+import Loader from "@/components/ui/loader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +30,9 @@ export default function RootLayout({
           disableTransitionOnChange
           enableColorScheme
         >
-          <Providers> {children}</Providers>
+          <Providers>
+            <Suspense fallback={<Loader />}>{children}</Suspense>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
