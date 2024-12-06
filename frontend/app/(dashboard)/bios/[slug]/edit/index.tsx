@@ -44,6 +44,8 @@ export default function EditBioPage({username}:{username:any}) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Edit Link In Bio</h1>
+
         <Card>
           <CardHeader>
             <CardTitle>Profile Information</CardTitle>
