@@ -1,10 +1,12 @@
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
+from rest_framework import status,viewsets
 from django.contrib.auth import authenticate, get_user_model
 from .serializers import LoginSerializer, UserSerializer, UserRegisterSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 
 
 # Create your views here.
@@ -49,3 +51,14 @@ class LoginView(APIView):
             return Response({'message': 'No user was found with that email'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response({'message': 'Invalid input, please enter correct values'}, status=status.HTTP_400_BAD_REQUEST)
 
+    
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'username'
+    
+    def list(self, request):
+        user = request.user
+        serializer = UserSerializer(user,context={'request': request})
+        return Response({'data':serializer.data},status=status.HTTP_200_OK)
