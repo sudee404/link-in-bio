@@ -1,6 +1,7 @@
 import re
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .models import Business
 
 User = get_user_model()
 
@@ -17,7 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    
+    business_name = serializers.CharField(write_only=True, required=False)  # Non-model field
+
     class Meta:
         model = User
         fields = ('email','password','account_type','business_name')
@@ -25,8 +27,18 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(
             email=validated_data['email'],
+            account_type=validated_data['account_type'],
             password=validated_data['password'],
         )
+        # create business profile if account_type is 'business'
+        if validated_data['account_type'] == 'business':
+            business = Business.objects.get_or_create(
+                name=validated_data['business_name']
+            )
+            business.save()
+            # add user to business
+            user.business = business
+            user.save()
         return user
 
     def validate_password(self, value):
