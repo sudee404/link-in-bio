@@ -39,7 +39,7 @@ class LinkInBio(models.Model):
     def save(self, *args, **kwargs):
         # generate username at save
         if not self.username:
-            self.username = generate_username[0]
+            self.username = generate_username()[0]
         super().save(*args, **kwargs)
 
     def __str__(self):

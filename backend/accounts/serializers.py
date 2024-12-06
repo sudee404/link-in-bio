@@ -32,7 +32,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         )
         # create business profile if account_type is 'business'
         if validated_data['account_type'] == 'business':
-            business = Business.objects.get_or_create(
+            business,created = Business.objects.get_or_create(
                 name=validated_data['business_name']
             )
             business.save()
