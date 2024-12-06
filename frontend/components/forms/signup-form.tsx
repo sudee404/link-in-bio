@@ -60,7 +60,7 @@ export function SignUpForm() {
           email: data.email,
           password: data.password,
           redirect: true,
-          callbackUrl: "/dashboard",
+          callbackUrl: "/accounts",
         });
       })
       .catch((err) => {

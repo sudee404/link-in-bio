@@ -93,7 +93,7 @@ export default function AccountPage() {
               Save Changes
             </button>
             <Link href="/dashboard" className="text-blue-500 hover:underline">
-              Back to Dashboard
+              Back to Profile
             </Link>
           </div>
         </form>

@@ -11,4 +11,4 @@ export default withAuth({
   },
 });
 
-export const config = { matcher: ["/dashboard","/accounts"] };
+export const config = { matcher: ["/accounts","/accounts/:path*"] };
