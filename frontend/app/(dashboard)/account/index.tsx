@@ -15,13 +15,13 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          className=" rounded-lg shadow-lg p-6 mb-8"
         >
           <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
           <form onSubmit={handleSubmit}>
