@@ -8,6 +8,7 @@ export interface User {
     account_type: string;
     recovery_email: string | null;
     bio: string | null;
+    bios: any[];
     phone: string | null;
     image: string;
     password: string | null;

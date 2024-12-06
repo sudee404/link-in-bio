@@ -3,7 +3,7 @@ import { UserContextType } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { createContext, useEffect, useState } from "react";
+import { createContext} from "react";
 
 export const UserContextContext = createContext<UserContextType>({});
 
@@ -17,7 +17,8 @@ export function UserContextProvider({ children }: { children: any }) {
     enabled: !!session,
   });
 
-  if(isLoading){
+  
+  if(status === "loading" || isLoading){
     return <Loader/>
   }
 
