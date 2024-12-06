@@ -1,6 +1,7 @@
 import re
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from home.serializers import LinkInBioSerializer
 from .models import Business
 
 User = get_user_model()
@@ -9,10 +10,14 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     name = serializers.CharField(source='get_full_name')
+    bios = serializers.SerializerMethodField()
     
     class Meta:
         model = User
         fields = ('__all__')
+        
+    def get_bios(self, obj):
+        return LinkInBioSerializer(obj.link_in_bios, many=True).data
         
         
 

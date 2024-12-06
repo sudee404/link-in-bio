@@ -79,6 +79,8 @@ class BusinessViewSet(viewsets.ModelViewSet):
     def list(self, request):
         try:
             user = request.user
+            if not user.business:
+                return Response({'message':'No business profile found'},status=status.HTTP_404_NOT_FOUND)
             serializer = BusinessSerializer(user.business,context={'request': request})
             return Response({'business':serializer.data},status=status.HTTP_200_OK)
         except:
