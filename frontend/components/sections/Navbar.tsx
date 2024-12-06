@@ -2,17 +2,18 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "../helpers/ThemeToggle";
+import { useSession } from "next-auth/react";
 
 const navigation = [
   { name: "Features", href: "#features" },
   { name: "Pricing", href: "#pricing" },
-  { name: "About", href: "#about" },
-  { name: "Contact", href: "#contact" },
+  { name: "Links", href: "/links" },
 ];
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,7 +26,11 @@ export default function Navbar() {
   return (
     <header
       className={`fixed w-full top-0 z-50 transition-all duration-300 ease-in-out backdrop-blur-sm
-      ${isScrolled ? "bg-white/80 dark:bg-gray-900/80 shadow-lg" : "bg-transparent"}`}
+      ${
+        isScrolled
+          ? "bg-white/80 dark:bg-gray-900/80 shadow-lg"
+          : "bg-transparent"
+      }`}
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between p-4 lg:px-8">
         <div className="flex items-center gap-x-8 lg:gap-x-12">
@@ -50,12 +55,21 @@ export default function Navbar() {
 
         <div className="flex items-center gap-6">
           <ThemeToggle />
-          <Link
-            href="/login"
-            className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
-          >
-            Log in
-          </Link>
+          {session ? (
+            <Link
+              href="/account"
+              className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
+            >
+              Account
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
+            >
+              Log in
+            </Link>
+          )}
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -63,12 +77,32 @@ export default function Navbar() {
           >
             <span className="sr-only">Toggle menu</span>
             {mobileMenuOpen ? (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             ) : (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             )}
           </button>
@@ -90,8 +124,18 @@ export default function Navbar() {
                 className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
               >
                 <span className="sr-only">Close menu</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -106,13 +150,21 @@ export default function Navbar() {
                   {item.name}
                 </Link>
               ))}
-              <Link
-                href="/login"
-                className="mt-4 inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Log in
-              </Link>
+              {session ? (
+                <Link
+                  href="/account"
+                  className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                >
+                  Account
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                >
+                  Log in
+                </Link>
+              )}
             </div>
           </div>
         </div>

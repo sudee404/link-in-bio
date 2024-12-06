@@ -14,11 +14,11 @@ import { SignInInput, signInSchema } from "@/lib/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export function SignInForm() {
-  const {status} = useSession()
+  const { status } = useSession();
   const [isLoading, setIsLoading] = React.useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const {
     register,
     handleSubmit,
@@ -33,20 +33,24 @@ export function SignInForm() {
   });
   async function onSubmit(formData: SignInInput) {
     setIsLoading(true);
-    await signIn("django-provider", {
-      ...formData,
-      redirect: false,
-    })
-      .then(() => {
+    try {
+      const result = await signIn("django-provider", {
+        ...formData,
+        redirect: false,
+      });
+      if (!result?.error) {
+        setIsLoading(false);
+        // Redirect the user to the previous or home page
         toast.success("Login successful, redirecting ...");
         router.push(callbackUrl);
-      })
-      .catch((error) => {
-        toast.error(error);
-      })
-      .finally(() => {
+      } else {
         setIsLoading(false);
-      });
+        toast.error(result?.error);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      toast.error(String(error));
+    }
   }
 
   React.useEffect(() => {
@@ -54,7 +58,7 @@ export function SignInForm() {
       router.push(callbackUrl);
     }
   }, [status]);
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 bg-white dark:bg-gray-900">
       <div className="w-full max-w-6xl bg-white dark:bg-gray-900 rounded-lg sm:rounded-card shadow-xl overflow-hidden">
@@ -122,7 +126,7 @@ export function SignInForm() {
                     required
                     className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                   />
-                    {errors.email && (
+                  {errors.email && (
                     <p className="text-red-500 text-sm">
                       {errors.email.message}
                     </p>
@@ -151,7 +155,7 @@ export function SignInForm() {
                     required
                     className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                   />
-                    {errors.password && (
+                  {errors.password && (
                     <p className="text-red-500 text-sm">
                       {errors.password.message}
                     </p>

@@ -19,7 +19,7 @@ export function SignUpForm() {
   const {status} = useSession()
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const router = useRouter();
   
   const {

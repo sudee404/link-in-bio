@@ -12,16 +12,14 @@ const DjangoProvider: Provider = {
 	},
 	authorize: async (credentials, req: any): Promise<any> => {
 		try {
-			const response = await axios.post(`${API_BASE_URL}accounts/login/`, {
+			console.log(`${API_BASE_URL}accounts/login/`,)
+			const response = await axios.post(`${API_BASE_URL}/accounts/login/`, {
 				...credentials,
 			});
-			const { userData, accessToken, exp } = response.data;
-			return Promise.resolve({
-				user: userData,
-				token: accessToken,
-				expires: exp,
-			});
+			const {data } = response;
+			return Promise.resolve(data);
 		} catch (error:any) {
+			console.log(error)
 			if (error.response.data?.email || error.response.data?.password) {
 				return Promise.reject(
 					new Error(
