@@ -26,14 +26,14 @@ export function SignInForm() {
           <div className="relative mx-auto w-48 h-48 mb-8">
             <img 
               src="/placeholder.svg?height=192&width=192" 
-              alt="Autofyle mascot"
+              alt="LinkFolio mascot"
               className="w-full h-full object-contain"
             />
           </div>
           <div className="bg-white rounded-lg shadow-lg p-8">
             <div className="text-center mb-8">
               <Link href="/" className="text-2xl font-bold text-blue-500">
-                autofyle
+                LinkFolio
               </Link>
             </div>
             <h1 className="text-xl font-semibold text-center mb-6">
