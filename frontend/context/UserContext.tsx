@@ -1,3 +1,4 @@
+import Loader from "@/components/ui/loader";
 import { UserContextType } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -16,6 +17,9 @@ export function UserContextProvider({ children }: { children: any }) {
     enabled: !!session,
   });
 
+  if(isLoading){
+    return <Loader/>
+  }
 
   return (
     <UserContextContext.Provider value={{ user }}>
