@@ -1,6 +1,3 @@
-import { sampleUser } from '@/lib/sample-data'
-import { motion } from "motion/react"
-import { ExternalLink } from 'lucide-react'
 import UserPage from '.'
 
 export default async function Home({ params }: { params: any}) {
