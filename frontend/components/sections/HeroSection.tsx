@@ -1,8 +1,11 @@
-"use client"
-import Link from 'next/link'
-import { motion } from "framer-motion"
+"use client";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 export default function HeroSection() {
+  const { data: session } = useSession();
+
   return (
     <div className="relative isolate px-6 pt-14 lg:px-8">
       <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
@@ -20,18 +23,42 @@ export default function HeroSection() {
             Your Digital Identity in One Simple Link
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Create a beautiful landing page that showcases all your important links, social media, and content in one place.
+            Create a beautiful landing page that showcases all your important
+            links, social media, and content in one place.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Link href="/register" className="rounded-md bg-purple-600 dark:bg-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 dark:hover:bg-purple-400 transition-all">
-              Get Started Free
-            </Link>
-            <Link href="/demo" className="text-sm font-semibold text-gray-900 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-all">
-              View Demo <span aria-hidden="true">→</span>
-            </Link>
-          </div>
+          {session ? (
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+              <Link
+                href="/account"
+                className="rounded-md bg-purple-600 dark:bg-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 dark:hover:bg-purple-400 transition-all"
+              >
+                Get Started Free
+              </Link>
+              <Link
+                href="/account/links"
+                className="text-sm font-semibold text-gray-900 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-all"
+              >
+                My Links <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+              <Link
+                href="/register"
+                className="rounded-md bg-purple-600 dark:bg-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 dark:hover:bg-purple-400 transition-all"
+              >
+                Get Started Free
+              </Link>
+              <Link
+                href="/demo"
+                className="text-sm font-semibold text-gray-900 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-all"
+              >
+                View Demo <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          )}
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
