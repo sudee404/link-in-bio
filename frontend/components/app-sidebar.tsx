@@ -39,7 +39,7 @@ const data = {
       url: "/accounts",
       icon: SquareTerminal,
       isActive: true,
-      items:[
+      items: [
         {
           title: "Profile",
           url: "/accounts",
@@ -51,7 +51,7 @@ const data = {
           icon: Frame,
         }
       ]
-    },    
+    },
   ],
   projects: [
     {
@@ -73,26 +73,49 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session } = useSession();
-  const {user} = React.useContext(UserContextContext)
+  const { user } = React.useContext(UserContextContext)
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
-        <SidebarMenuButton size="lg" asChild>
-              <Link href="/">
-               
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">LinkFolio</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
+          <SidebarMenuButton size="lg" asChild>
+            <Link href="/">
+
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">LinkFolio</span>
+              </div>
+            </Link>
+          </SidebarMenuButton>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain label="Settings" items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain label="Settings" items={[{
+          title: "Accounts",
+          url: "/accounts",
+          icon: SquareTerminal,
+          isActive: true,
+          items: user?.account_type === "business" ? [
+            {
+              title: "Profile",
+              url: "/accounts",
+            },
+            {
+              title: "Business",
+              url: "/accounts/business",
+            }
+          ] : [
+            {
+              title: "Profile",
+              url: "/accounts",
+            }
+          ]
+        }]} />
+        <NavProjects projects={user?.bios?.map((bio: any) => ({
+          name: bio?.username,
+          url: `/accounts/bios/${bio.username}`,
+          icon: Frame,
+        })) || []} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

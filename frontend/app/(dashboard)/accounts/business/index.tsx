@@ -1,22 +1,69 @@
 'use client'
 
-import { useState } from 'react'
+import Loader from '@/components/ui/loader';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
 
 export default function BusinessSettingsPage() {
+  const { data: session } = useSession()
+  const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient()
   const [business, setBusiness] = useState({
-    businessName: "AutoFyle Inc.",
-    businessEmail: "contact@autofyle.com",
-    businessPhone: "+1234567890",
-    businessAddress: "123 Business St, City, Country",
-    notificationsEnabled: true, // Added a toggle for notifications
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    notify: true, // Added a toggle for notifications
   })
 
+  const { data: { business: contextData } = {}, isLoading } = useSuspenseQuery({
+    queryKey: ["user-business"],
+    queryFn: async () => session ? 
+      await axios.get("/api/auth/business").then((res) => res?.data) : {},
+  });
+  useEffect(() => {
+    // Pre-fill the form with context data
+    if (contextData) {
+      setBusiness({
+        name: contextData?.name || "",
+        email: contextData?.email || "",
+        phone: contextData?.phone || "",
+        address: contextData?.address || "",
+        notify: true, // Added a toggle for notifications
+      });
+    }
+  }, [contextData]);
+  const handleSubmit = async () => {
+    setSaving(true);
+    // recreate data without image , username and email
+
+    const { notify, ...rest } = business;
+    const formData = { ...rest };
+
+    await axios.post("/api/auth/business", formData).then((res) => {
+      toast.success("Business updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["user-business"] });
+    }).catch((err) => {
+      console.log(err);
+      toast.error(err.message);
+    }).finally(() => {
+      setSaving(false);
+    });
+
+  }
+
+  if (isLoading) {
+    return <Loader />
+  }
   return (
     <div className="shadow-lg border rounded-lg overflow-hidden">
       {/* Business Header */}
       <div className="p-6">
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold">{business.businessName}</h1>
+          <h1 className="text-xl font-bold">{business?.name}</h1>
           <button className="text-blue-500 mt-1">Preview Business</button>
         </div>
       </div>
@@ -30,9 +77,9 @@ export default function BusinessSettingsPage() {
             <label className="text-sm font-medium text-gray-700">Business Name</label>
             <input
               type="text"
-              value={business.businessName}
+              value={business?.name}
               onChange={(e) =>
-                setBusiness({ ...business, businessName: e.target.value })
+                setBusiness({ ...business, name: e.target.value })
               }
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
@@ -43,9 +90,9 @@ export default function BusinessSettingsPage() {
             <label className="text-sm font-medium text-gray-700">Business Email</label>
             <input
               type="email"
-              value={business.businessEmail}
+              value={business?.email}
               onChange={(e) =>
-                setBusiness({ ...business, businessEmail: e.target.value })
+                setBusiness({ ...business, email: e.target.value })
               }
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
@@ -56,9 +103,9 @@ export default function BusinessSettingsPage() {
             <label className="text-sm font-medium text-gray-700">Business Phone</label>
             <input
               type="text"
-              value={business.businessPhone}
+              value={business?.phone}
               onChange={(e) =>
-                setBusiness({ ...business, businessPhone: e.target.value })
+                setBusiness({ ...business, phone: e.target.value })
               }
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
@@ -69,9 +116,9 @@ export default function BusinessSettingsPage() {
             <label className="text-sm font-medium text-gray-700">Business Address</label>
             <input
               type="text"
-              value={business.businessAddress}
+              value={business?.address}
               onChange={(e) =>
-                setBusiness({ ...business, businessAddress: e.target.value })
+                setBusiness({ ...business, address: e.target.value })
               }
               className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
             />
@@ -83,9 +130,9 @@ export default function BusinessSettingsPage() {
             <div className="mt-1 flex items-center">
               <input
                 type="checkbox"
-                checked={business.notificationsEnabled}
+                checked={business?.notify}
                 onChange={(e) =>
-                  setBusiness({ ...business, notificationsEnabled: e.target.checked })
+                  setBusiness({ ...business, notify: e.target.checked })
                 }
                 className="h-5 w-5 border-gray-300 rounded-lg"
               />
@@ -97,8 +144,8 @@ export default function BusinessSettingsPage() {
 
       {/* Business Settings */}
       <div className="p-6 border-t border-gray-200">
-        <button className="mt-4 w-full p-3 bg-blue-500 text-white rounded-lg">
-          Save Business Settings
+      <button className="mt-4 w-full p-3 bg-blue-500 text-white rounded-lg" disabled={saving} onClick={handleSubmit}>
+          {saving ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </div>
