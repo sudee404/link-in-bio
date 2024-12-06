@@ -1,9 +1,9 @@
-import AccountPage from '.'
+import ProfilePage from '.'
 
 export default function Home() {
 
   return (
-   <AccountPage/>
+   <ProfilePage/>
   )
 }
 
