@@ -1,11 +1,14 @@
 export interface User {
     id: string;
     name: string;
+    first_name: string;
+    last_name: string;
     email: string;
-    emailVerified: string | null;
+    username: string;
+    account_type: string;
+    recovery_email: string | null;
     bio: string | null;
     phone: string | null;
-    location: string | null;
     image: string;
     password: string | null;
     createdAt: Date;
