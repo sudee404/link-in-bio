@@ -1,9 +1,9 @@
-import DashboardPage from '.'
+import AccountPage from '.'
 
 export default function Home() {
 
   return (
-   <DashboardPage/>
+   <AccountPage/>
   )
 }
 
