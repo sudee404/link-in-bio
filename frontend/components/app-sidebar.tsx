@@ -30,11 +30,13 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { UserContextContext } from "@/context/UserContext";
+import { usePathname } from "next/navigation";
 
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = React.useContext(UserContextContext)
-
+  const pathname = usePathname()
+  
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -54,7 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           title: "Accounts",
           url: "/accounts",
           icon: SquareTerminal,
-          isActive: true,
+          isActive: pathname === '/accounts',
           items: user?.account_type === "business" ? [
             {
               title: "Profile",
@@ -75,7 +77,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           name: bio?.username,
           url: `/bios/${bio.username}`,
           icon: Frame,
-        })) || []} />
+        })) || []} user={user} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

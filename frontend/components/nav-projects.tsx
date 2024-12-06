@@ -25,29 +25,31 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export function NavProjects({
-  projects,
+  projects, user
 }: {
   projects: {
     name: string
     url: string
     icon: LucideIcon
-  }[]
+  }[], user: any
 }) {
   const { isMobile } = useSidebar()
+  const pathname = usePathname()
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Link in bios</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
+        {projects.map((item,idx) => (
+          <SidebarMenuItem key={idx}>
+            <SidebarMenuButton asChild isActive={pathname === item?.url}>
+              <Link href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -78,11 +80,11 @@ export function NavProjects({
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
-        <SidebarMenuItem>
+       {user?.account_type === 'business' &&  <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
-            <Link href="/accounts/bios/create">Create New</Link>
+            <Link href="/bios/create">Create New</Link>
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </SidebarMenuItem>}
       </SidebarMenu>
     </SidebarGroup>
   )
