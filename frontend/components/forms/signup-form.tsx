@@ -146,7 +146,6 @@ export function SignUpForm() {
                     autoComplete="email"
                     autoCorrect="off"
                     disabled={isSubmitting || isLoading}
-                    icon={<Mail className="h-4 w-4" />}
                     required
                     className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                   />
