@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from random_username.generate import generate_username
 
 User = get_user_model()
 
 # Create your models here.
 class LinkInBio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='link_in_bios')
-    username = models.SlugField(unique=True)  # To ensure the unique system-wide username.
+    username = models.SlugField(unique=True,null=True)  # To ensure the unique system-wide username.
     title = models.CharField(max_length=100)  # Microsite title.
     type = models.CharField(
         max_length=50,
@@ -29,6 +30,17 @@ class LinkInBio(models.Model):
     update_no = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Link In Bio'
+        verbose_name_plural = 'Link In Bios'
+        ordering = ['-created_at']
+        
+    def save(self, *args, **kwargs):
+        # generate username at save
+        if not self.username:
+            self.username = generate_username[0]
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.username} ({self.type})"

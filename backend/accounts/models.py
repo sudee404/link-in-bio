@@ -53,7 +53,7 @@ class MyUser(AbstractBaseUser):
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     updated_at = models.DateTimeField(auto_now=True,null=True)
     # Business
-    business_name = models.CharField(max_length=255, null=True)
+    business = models.ForeignKey('Business', on_delete=models.CASCADE, null=True)
     
     USERNAME_FIELD = 'email'
   
@@ -83,3 +83,23 @@ class MyUser(AbstractBaseUser):
         verbose_name = 'User Account'
         verbose_name_plural = 'User Accounts'
 
+
+class Business(models.Model):
+    """Model definition for Business."""
+
+    name = models.CharField(max_length=255)
+    email = models.EmailField(null=True)
+    phone = models.CharField(max_length=20,null=True)
+    address = models.CharField(max_length=255,null=True)
+    description = models.TextField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        """Meta definition for Business."""
+
+        verbose_name = 'Business'
+        verbose_name_plural = 'Businesss'
+
+    def __str__(self):
+        """Unicode representation of Business."""
+        return self.name
