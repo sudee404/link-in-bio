@@ -215,7 +215,7 @@ export function SignUpForm() {
                         placeholder="Company name"
                         disabled={isSubmitting || isLoading}
                         required
-                        className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                        className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 py-6"
                       />
                       {errors.business_name && (
                         <p className="text-red-500 text-sm">
