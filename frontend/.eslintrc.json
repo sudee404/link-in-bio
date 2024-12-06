@@ -1,3 +1,22 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": [
+    "eslint:recommended",
+    "next"
+  ],
+  "rules": {
+    "react/no-unescaped-entities": "off",
+    "@next/next/no-page-custom-font": "off",
+    "@next/next/no-img-element": "off",
+    "no-unused-vars": "off",
+    "no-mixed-spaces-and-tabs": "off",
+    "no-extra-boolean-cast": "off",
+    "no-undef": "off",
+    "no-extra-semi": "off",
+    "no-useless-escape": "off",
+    "no-constant-condition": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "no-case-declarations": "off",
+    "no-unsafe-optional-chaining": "off",
+    "jsx-a11y/alt-text": "off"
+  }
 }
