@@ -12,7 +12,6 @@ const DjangoProvider: Provider = {
 	},
 	authorize: async (credentials, req: any): Promise<any> => {
 		try {
-			console.log(`${API_BASE_URL}accounts/login/`,)
 			const response = await axios.post(`${API_BASE_URL}/accounts/login/`, {
 				...credentials,
 			});

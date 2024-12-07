@@ -3,8 +3,11 @@ import Link from "next/link"
 import { Instagram, Mail, Youtube, TwitterIcon as TikTok, Star, TwitterIcon, Linkedin } from 'lucide-react'
 import { Button } from "../ui/button";
 import LinkCard from "../cards/LinkCard";
+import { useState } from "react";
+import LinkDetail from "./LinkDetail";
 
 export default function BioView({ bio: bio }: { bio: any }) {
+  const [selected, setSelected] = useState('')
 
   return (
     <div className="container  mx-auto grid-cols-1 grid md:grid-cols-3 items-center justify-center">
@@ -61,10 +64,10 @@ export default function BioView({ bio: bio }: { bio: any }) {
       {/* Scrollable Right Content */}
       <div className="md:h-screen  overflow-y-scroll col-span-2 py-5 no-scrollbar">
         <div className=" flex items-center">
-          <div className="mt-5">
+          {!!selected ? <LinkDetail link={selected} setSelected={setSelected}/> : <div className="mt-5">
             {bio?.links?.length ? <div className="flex flex-wrap gap-5 my-20">
               {bio?.links?.map((link: any) => (
-                <LinkCard key={link.id} link={link} />
+                <LinkCard key={link.id} link={link} setSelected={setSelected}/>
               ))}
             </div> : (
               <div className="flex flex-col items-center justify-center h-screen">
@@ -82,10 +85,8 @@ export default function BioView({ bio: bio }: { bio: any }) {
                 </Button>
               </Link>
             </div>
-          </div>
+          </div>}
         </div>
-
-
       </div>
     </div>
   )
