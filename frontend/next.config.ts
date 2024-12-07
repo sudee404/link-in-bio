@@ -2,7 +2,21 @@ import type { NextConfig } from "next";
 
 const nextConfig = {
   images: {
-    domains: ['yourcdndomain.com'], // Add your image domains
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/**',
+      },
+  
+    ],
   },
 
 };

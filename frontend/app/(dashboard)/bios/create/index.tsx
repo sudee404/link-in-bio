@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray, Controller, FieldError } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -42,8 +42,10 @@ const bioFormSchema = z.object({
       title: z.string().min(1, "Title is required"),
       url: z.string().url("Enter a valid URL"),
       description: z.string().optional(),
-      price: z.number().nonnegative().optional(),
-      buttonText: z.string().optional(),
+      price: z.preprocess((value) => value === undefined ? undefined : Number(value), z.number().optional()),
+      rating: z.preprocess((value) => value === undefined ? undefined : Number(value), z.number().optional()),
+      image: z.any().optional(),
+      button_text: z.string().optional(),
     })
   ),
 });
@@ -71,7 +73,7 @@ export default function CreateBioPage() {
       type: "",
       avatar: "",
       social_links: { Instagram: "", TikTok: "", LinkedIn: "", Twitter: "" },
-      links: [{ type: "", title: "", url: "", description: "", price: undefined, buttonText: "" }],
+      links: [{ type: "", title: "", url: "", description: "", price: undefined, rating: undefined, button_text: "" }],
     },
   });
 
@@ -82,13 +84,48 @@ export default function CreateBioPage() {
 
   const mutation = useMutation({
     mutationFn: async (data: BioFormType) => {
+      const formData = new FormData();
+      // append values,files to formData
+      formData.append("title", data.title);
+      formData.append("description", data.description || "");
+      formData.append("type", data.type);
+      if (data?.avatar?.length) {
+        formData.append("avatar", data?.avatar[0]);
+      }
+      formData.append("social_links", JSON.
+        stringify(data.social_links));
+
+      data.links.forEach((link, index) => {
+        formData.append(`links[${index}][type]`, link.type);
+        formData.append(`links[${index}][title]`, link.title);
+        formData.append(`links[${index}][url]`, link.url);
+
+        if (link.description) {
+          formData.append(`links[${index}][description]`, link.description);
+        }
+
+        if (link.price) {
+          formData.append(`links[${index}][price]`, String(link.price));
+        }
+
+        if (link.rating) {
+          formData.append(`links[${index}][rating]`, String(link.rating));
+        }
+
+        if (link.button_text) {
+          formData.append(`links[${index}][button_text]`, link.button_text);
+        }
+
+        // Handle the image file
+        if (link?.image?.length) {
+          formData.append(`links[${index}][image]`, link.image[0]);
+        }
+      });
+      formData.append("user", String(user?.id));
+
       const response = await axios.post(
         "/api/bios",
-        {
-          ...data,
-          avatar: data?.avatar?.length ? data?.avatar[0] : null,
-          user: user?.id,
-        },
+        formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -100,10 +137,10 @@ export default function CreateBioPage() {
     onMutate: async (newBio) => {
       // Cancel any outgoing refetches for 'user-profile'
       await queryClient.cancelQueries({ queryKey: ["user-profile"] });
-  
+
       // Snapshot the previous value
       const previousUser = queryClient.getQueryData(["user-profile"]);
-  
+
       // Optimistically update to include the new bio
       queryClient.setQueryData(["user-profile"], (old: any) => {
         if (!old?.user) return old;
@@ -115,7 +152,7 @@ export default function CreateBioPage() {
           },
         };
       });
-  
+
       // Return the context for rollback
       return { previousUser };
     },
@@ -136,7 +173,7 @@ export default function CreateBioPage() {
           },
         };
       });
-  
+
       // Redirect to the new bio's page
       if (newBio?.username) {
         router.push(`/bios/${newBio.username}`); // Adjust route as necessary
@@ -242,13 +279,13 @@ export default function CreateBioPage() {
 
       {/* Bio Links */}
       <Card>
-        <CardHeader className="flex items-center justify-between">
+          <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Bio Links</CardTitle>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => append({ type: "", title: "", url: "", description: "", price: undefined, buttonText: "" })}
+            onClick={() => append({ type: "", title: "", url: "", description: "", price: undefined, rating: undefined, button_text: "" })}
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Link
@@ -290,23 +327,84 @@ export default function CreateBioPage() {
                       </Select>
                     )}
                   />
+                  {errors.links?.[index]?.type && (
+                    <p className="text-red-500 text-sm">
+                      {String((errors.links[index].type as FieldError)?.message || "Invalid input")}
+                    </p>
+                  )}
+
                 </div>
                 <div className="space-y-2">
                   <Label>Title</Label>
                   <Input {...register(`links.${index}.title`)} placeholder="Enter link title" />
+                  {errors.links?.[index]?.title && (
+                    <p className="text-red-500 text-sm">
+                      {errors.links[index].title.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label>Image</Label>
+                  <Input {...register(`links.${index}.image`)} type="file" placeholder="Enter link image" />
+                  {errors.links?.[index]?.image && (
+                    <p className="text-red-500 text-sm">
+                      {String(errors.links[index].image.message)}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>URL</Label>
                   <Input {...register(`links.${index}.url`)} placeholder="Enter URL" />
+                  {errors.links?.[index]?.url && (
+                    <p className="text-red-500 text-sm">
+                      {errors.links[index].url.message}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Description</Label>
                   <Textarea {...register(`links.${index}.description`)} placeholder="Enter link description" />
+                  {errors.links?.[index]?.description && (
+                    <p className="text-red-500 text-sm">
+                      {errors.links[index].description.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+
+                <div className="space-y-2">
+                  <Label>Price (Optional)</Label>
+                  <Input {...register(`links.${index}.price`)} type="number" placeholder="Enter Price" />
+                  {errors.links?.[index]?.price && (
+                    <p className="text-red-500 text-sm">
+                      {errors.links[index].price.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label>Rating (Optional)</Label>
+                  <Input {...register(`links.${index}.rating`)} type="number" placeholder="Enter Rating" />
+                  {errors.links?.[index]?.rating && (
+                    <p className="text-red-500 text-sm">
+                      {errors.links[index].rating.message}
+                    </p>
+                  )}
+                </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Button Text</Label>
+                  <Input {...register(`links.${index}.button_text`)} placeholder="Enter link button text" />
+                  {errors.links?.[index]?.button_text && (
+                    <p className="text-red-500 text-sm">
+                      {errors.links[index].button_text.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </CardContent>
+
       </Card>
 
       <div className="flex justify-end space-x-4">

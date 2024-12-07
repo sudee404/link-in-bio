@@ -17,4 +17,4 @@ class LinkInBioSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
     def get_links(self, obj):
-        return LinkSerializer(obj.links, many=True).data
+        return LinkSerializer(obj.links, many=True,context=self.context).data

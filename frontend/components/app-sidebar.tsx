@@ -27,7 +27,6 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { UserContextContext } from "@/context/UserContext";
 import { usePathname } from "next/navigation";
@@ -36,7 +35,7 @@ import { usePathname } from "next/navigation";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = React.useContext(UserContextContext)
   const pathname = usePathname()
-  
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
