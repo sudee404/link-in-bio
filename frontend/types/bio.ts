@@ -13,7 +13,7 @@ export interface SocialLinks {
     icon?: string
     price?: number
     rating?: number
-    buttonText?: string
+    button_text?: string
   }
   
   export interface BioData {

@@ -15,7 +15,7 @@ export const BioLinkSchema = z.object({
   icon: z.string().optional(),
   price: z.number().min(0).optional(),
   rating: z.number().min(0).max(5).optional(),
-  buttonText: z.string().optional(),
+  button_text: z.string().optional(),
 })
 
 export const ThemeSchema = z.object({
