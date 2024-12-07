@@ -12,6 +12,7 @@ class LinkInBio(models.Model):
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     social_links = models.JSONField(blank=True, null=True)
+    published = models.BooleanField(default=False)
     type = models.CharField(
         max_length=50,
         choices=[
@@ -53,8 +54,23 @@ class Link(models.Model):
     link_in_bio = models.ForeignKey(LinkInBio, on_delete=models.CASCADE, related_name='links')
     title = models.CharField(max_length=100)  # Displayed title for the link.
     url = models.URLField()  # URL of the link.
+    image = models.ImageField(upload_to='link_images/', blank=True, null=True)  # Image for the link.
+    description = models.TextField(blank=True, null=True)  # Description of the link.
+    type = models.CharField(
+        max_length=50,
+        choices=[
+            ('download', 'Download'),
+            ('store', 'Store'),
+            ('booking', 'Booking'),
+            ('custom', 'Custom'),
+        ],
+        default='custom'
+    )
+    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Price for the link.
+    rating = models.PositiveIntegerField(blank=True, null=True)  # Rating for the link.
     position = models.PositiveIntegerField(default=0)  # Position in the list for ordering.
     created_at = models.DateTimeField(auto_now_add=True)
+    button_text = models.CharField(max_length=50, blank=True, null=True,default="CLICK ME")  # Text for the button.
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
