@@ -19,7 +19,11 @@ export default function PreviewPage({ username }: { username: any }) {
   const handlePublish = async () => {
     setIsPublishing(true)
     // Here you would typically send a request to your API to publish the changes
-    await axios.patch(`/api/bios/${username}`, { published: true }).then((res) => {
+    await axios.patch(`/api/bios/${username}`, { published: true },{
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }).then((res) => {
       toast.success("Bio published successfully")
       router.push(`/${username}`)
 

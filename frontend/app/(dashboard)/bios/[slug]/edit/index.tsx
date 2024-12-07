@@ -31,6 +31,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const bioFormSchema = z.object({
   title: z.string().min(1, "Display name is required"),
+  username: z.string().min(1, "Username is required"),
   description: z.string().optional(),
   avatar: z
     .any().optional(),
@@ -38,6 +39,7 @@ const bioFormSchema = z.object({
   social_links: z.record(z.string().optional()),
   links: z.array(
     z.object({
+      slug: z.string().optional(),
       type: z.string().min(1, "Link type is required"),
       title: z.string().min(1, "Title is required"),
       url: z.string().url("Enter a valid URL"),
@@ -52,7 +54,7 @@ const bioFormSchema = z.object({
 
 type BioFormType = z.infer<typeof bioFormSchema>;
 
-export default function EditBioPage({username}:{username:string}) {
+export default function EditBioPage({ username }: { username: string }) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const queryClient = useQueryClient()
@@ -82,16 +84,21 @@ export default function EditBioPage({username}:{username:string}) {
     mutationFn: async (data: BioFormType) => {
       const formData = new FormData();
       // append values,files to formData
+      formData.append("username", data.username);
       formData.append("title", data.title);
       formData.append("description", data.description || "");
       formData.append("type", data.type);
-      if (Array.isArray(data?.avatar) && data?.avatar?.length) {
+      if (data?.avatar instanceof FileList && data?.avatar?.length > 0) {
         formData.append("avatar", data?.avatar[0]);
       }
       formData.append("social_links", JSON.
         stringify(data.social_links));
 
       data.links.forEach((link, index) => {
+        // Append id if available in the link object
+        if (link.slug) {
+          formData.append(`links[${index}][slug]`, link.slug);
+        }
         formData.append(`links[${index}][type]`, link.type);
         formData.append(`links[${index}][title]`, link.title);
         formData.append(`links[${index}][url]`, link.url);
@@ -111,9 +118,8 @@ export default function EditBioPage({username}:{username:string}) {
         if (link.button_text) {
           formData.append(`links[${index}][button_text]`, link.button_text);
         }
-
-        // If link image is array
-        if (Array.isArray(link?.image) && link?.image?.length) {
+        // If link image is file, append it to formData
+        if (link.image instanceof FileList && link.image.length > 0) {
           formData.append(`links[${index}][image]`, link.image[0]);
         }
       });
@@ -137,7 +143,7 @@ export default function EditBioPage({username}:{username:string}) {
       // Snapshot the previous value
       const previousUser = queryClient.getQueryData(["user-profile"]);
 
-      
+
       // Return the context for rollback
       return { previousUser };
     },
@@ -173,7 +179,7 @@ export default function EditBioPage({username}:{username:string}) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        Create Link In Bio
+        Edit Link In Bio
       </h1>
 
       {/* Profile Information */}
@@ -182,6 +188,14 @@ export default function EditBioPage({username}:{username:string}) {
           <CardTitle>Bio Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="flex items-center justify-between"><span>
+              Username   </span>
+              <small className="text-blue-500 text-sm my-1">Updated {bio?.update_no}/2</small>
+            </Label>
+            <Input id="name" placeholder="Enter username" {...register("username")} disabled={bio?.update_no >= 2}/>
+            {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+          </div>
           <div className="space-y-2">
             <Label htmlFor="name">Display Name</Label>
             <Input id="name" placeholder="Enter your display name" {...register("title")} />
@@ -253,7 +267,7 @@ export default function EditBioPage({username}:{username:string}) {
 
       {/* Bio Links */}
       <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Bio Links</CardTitle>
           <Button
             type="button"
@@ -346,24 +360,24 @@ export default function EditBioPage({username}:{username:string}) {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
 
-                <div className="space-y-2">
-                  <Label>Price (Optional)</Label>
-                  <Input {...register(`links.${index}.price`)} type="number" placeholder="Enter Price" />
-                  {errors.links?.[index]?.price && (
-                    <p className="text-red-500 text-sm">
-                      {errors.links[index].price.message}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label>Rating (Optional)</Label>
-                  <Input {...register(`links.${index}.rating`)} type="number" placeholder="Enter Rating" />
-                  {errors.links?.[index]?.rating && (
-                    <p className="text-red-500 text-sm">
-                      {errors.links[index].rating.message}
-                    </p>
-                  )}
-                </div>
+                  <div className="space-y-2">
+                    <Label>Price (Optional)</Label>
+                    <Input {...register(`links.${index}.price`)} type="number" placeholder="Enter Price" />
+                    {errors.links?.[index]?.price && (
+                      <p className="text-red-500 text-sm">
+                        {errors.links[index].price.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Rating (Optional)</Label>
+                    <Input {...register(`links.${index}.rating`)} type="number" placeholder="Enter Rating" />
+                    {errors.links?.[index]?.rating && (
+                      <p className="text-red-500 text-sm">
+                        {errors.links[index].rating.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Button Text</Label>
