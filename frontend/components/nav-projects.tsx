@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  Edit,
   Folder,
   Forward,
   MoreHorizontal,
@@ -141,6 +142,10 @@ export function NavProjects({
                   <DropdownMenuItem onClick={() => router.push(item.url)}>
                     <Folder className="text-muted-foreground" />
                     <span>View</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push(`/bios/${item.name}/edit`)}>
+                    <Edit className="text-muted-foreground" />
+                    <span>Edit</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setOpen(item.name)}>
