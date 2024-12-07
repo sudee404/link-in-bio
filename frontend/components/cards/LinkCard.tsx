@@ -1,6 +1,6 @@
 import Image from "next/image"
 import { Star } from 'lucide-react'
-export default function LinkCard({ link }: { link: any }) {
+export default function LinkCard({ link,setSelected }: { link: any,setSelected:any }) {
     return (
         <div key={link?.id} className="rounded-xl overflow-hidden bg-slate-200 dark:bg-black shadow-md md:w-2/5 h-fit hover:shadow-lg transition-all duration-300">
             <div className="p-3">
@@ -32,7 +32,7 @@ export default function LinkCard({ link }: { link: any }) {
                         )}
                     </div>
                 </div>
-                <button className="w-full mt-4 bg-green-600 hover:bg-green-700 text-black font-bold py-2 px-4 rounded-md transition duration-300">
+                <button className="w-full mt-4 bg-green-600 hover:bg-green-700 text-black font-bold py-2 px-4 rounded-md transition duration-300" onClick={() => {setSelected(link)}}>
                     {link?.button_text}
                 </button>
             </div>

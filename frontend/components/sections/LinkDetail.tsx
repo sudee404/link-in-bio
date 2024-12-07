@@ -1,0 +1,79 @@
+import Link from "next/link";
+import { X, ArrowRight } from "lucide-react";
+
+export default function LinkDetail({ link, setSelected }:any) {
+  return (
+    <div className="relative py-32 overflow-hidden w-full">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-purple-50 to-gray-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-gray-900" />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+
+      {/* Dismiss Button */}
+      <button
+        className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors"
+        onClick={() => setSelected("")}
+        aria-label="Close"
+      >
+        <X className="w-6 h-6" />
+      </button>
+
+      <div className="relative max-w-4xl mx-auto px-6 lg:px-8 text-center">
+        <div className="space-y-8">
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 inline-block text-transparent bg-clip-text">
+            {link?.title || "Link Details"}
+          </h2>
+          {link?.description && (
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              {link.description}
+            </p>
+          )}
+
+          {/* Price and Rating */}
+          <div className="flex justify-center items-center gap-4">
+            {link?.price && (
+              <span className="font-bold text-xl text-red-600">
+                ${link.price}
+              </span>
+            )}
+            {link?.rating && (
+              <div className="flex items-center">
+                <svg
+                  className="w-5 h-5 text-yellow-400 fill-yellow-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 17.27l5.18 3.73-1.64-7.03L20 8.91l-7.19-.61L12 2 9.19 8.3 2 8.91l5.46 5.06L5.82 21z"
+                  />
+                </svg>
+                <span className="ml-1 text-sm">{link.rating}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link
+              href={link?.url || "#"}
+              className="inline-flex items-center px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-500 dark:to-purple-500 text-white font-medium shadow-lg hover:shadow-purple-500/25 transition-all duration-200 transform hover:scale-[1.02] hover:opacity-90"
+            >
+              Visit Link
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
+            <button
+              onClick={() => setSelected("")}
+              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
