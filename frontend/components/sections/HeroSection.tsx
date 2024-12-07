@@ -35,7 +35,7 @@ export default function HeroSection() {
                 Get Started Free
               </Link>
               <Link
-                href="/accounts/bios"
+                href="/bios"
                 className="text-sm font-semibold text-gray-900 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-all"
               >
                 My Links <span aria-hidden="true">→</span>

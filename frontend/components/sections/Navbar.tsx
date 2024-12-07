@@ -6,8 +6,7 @@ import { useSession } from "next-auth/react";
 
 const navigation = [
   { name: "Features", href: "#features" },
-  { name: "Pricing", href: "#pricing" },
-  { name: "Links", href: "/links" },
+  { name: "Pricing", href: "#pricing" }, { name: "Links", href: "/bios" },
 ];
 
 export default function Navbar() {

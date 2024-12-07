@@ -82,7 +82,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/accounts/bios">
+                <Link href="/bios">
                   <Sparkles />
                   Link in bio(s)
                 </Link>
