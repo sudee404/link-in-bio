@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('__all__')
         
     def get_bios(self, obj):
-        return LinkInBioSerializer(obj.link_in_bios, many=True).data
+        return LinkInBioSerializer(obj.link_in_bios, many=True,context=self.context).data
         
         
 
