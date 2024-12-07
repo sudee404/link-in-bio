@@ -1,3 +1,4 @@
+from django.http import Http404
 from . import models, serializers
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -21,6 +22,16 @@ class LinkInBioViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     parser_classes = [MultiPartParser, FormParser]
     lookup_field = 'username'
+    
+    
+    def retrieve(self, request, *args, **kwargs):
+        # Ensure the bio is published
+        username = self.kwargs.get('username')
+        bio = models.LinkInBio.objects.filter(username=username, published=True).first()
+        if not bio :
+            raise Http404("Bio not found or not published.")
+        # Serialize
+        return super().retrieve(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         # Save the main object (e.g., Bio)
@@ -65,25 +76,31 @@ class LinkInBioViewSet(viewsets.ModelViewSet):
                 if index not in links_data:
                     links_data[index] = {}
                 links_data[index][field] = value
-        # Delete links that are not in the request data
-        links_to_delete = models.Link.objects.filter(
-            link_in_bio=serializer.instance).exclude(id__in=links_data.keys())
-        links_to_delete.delete()
-        
-        # Update,Delete, or Create `Link` objects for each parsed link
-        for link_data in links_data.values():
-            link_id = link_data.get('id')
+        slugs_to_keep = []
 
+        # Update, or Create `Link` objects for each parsed link
+        for link_data in links_data.values():
+            link_id = link_data.get('slug')
             if link_id:
                 # Update existing link
                 link = models.Link.objects.get(
-                    id=link_id, link_in_bio=serializer.instance)
+                    slug=link_id, link_in_bio=serializer.instance)
                 for field, value in link_data.items():
                     setattr(link, field, value)
-                link.save()
+                
             else:
                 # Create new link
-                models.Link.objects.create(
+                link = models.Link.objects.create(
                     link_in_bio=serializer.instance, **link_data)
-
-            return super().perform_update(serializer)
+                
+            link.save()    
+            slugs_to_keep.append(link.slug)
+        
+        # Delete extra links that are not in the updated data
+        if len(self.request.data.keys()) > 1:
+            # slug not in slugs_to_keep
+            links_to_delete = models.Link.objects.filter(
+                link_in_bio=serializer.instance).exclude(slug__in=slugs_to_keep)
+            links_to_delete.delete()
+            
+        return super().perform_update(serializer)
