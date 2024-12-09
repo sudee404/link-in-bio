@@ -4,7 +4,6 @@ import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { UserContextProvider } from "@/context/UserContext";
-import { ToastContainer } from "react-toastify";
 
 interface ProvidersProps {
   children: ReactNode;
@@ -31,18 +30,6 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
       <QueryClientProvider client={queryClient}>
         <UserContextProvider>
           {children} 
-          <ToastContainer
-							position="bottom-left"
-							autoClose={2000}
-							hideProgressBar={false}
-							newestOnTop
-							closeOnClick
-							rtl={false}
-							pauseOnFocusLoss={false}
-							draggable
-							pauseOnHover
-							theme="colored"
-						/>
         </UserContextProvider>
       </QueryClientProvider>
     </SessionProvider>

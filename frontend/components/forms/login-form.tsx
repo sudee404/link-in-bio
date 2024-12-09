@@ -8,10 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { SignInInput, signInSchema } from "@/lib/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "@/hooks/use-toast";
 
 export function SignInForm() {
   const { status } = useSession();
@@ -41,15 +41,27 @@ export function SignInForm() {
       if (!result?.error) {
         setIsLoading(false);
         // Redirect the user to the previous or home page
-        toast.success("Login successful, redirecting ...");
+        toast({
+          title: "Login successful",
+          description: "Redirecting...",
+          duration: 3000,
+        })
         router.push(callbackUrl);
       } else {
         setIsLoading(false);
-        toast.error(result?.error);
+        toast({
+          title: "Login failed",
+          description: "Invalid email or password",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       setIsLoading(false);
-      toast.error(String(error));
+      toast({
+        title: "Login failed",
+        description: "Invalid email or password",
+        variant: "destructive",
+      })
     }
   }
 

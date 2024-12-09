@@ -22,10 +22,9 @@ import {
   SelectLabel,
 } from "@/components/ui/select";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
 import { UserContextContext } from "@/context/UserContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
 
 // Define Zod Schema
 
@@ -150,7 +149,11 @@ export default function EditBioPage({ username }: { username: string }) {
     onError: (err, newBio, context) => {
       // Rollback to the previous state
       console.log(err)
-      toast.error("Error creating Link In Bio!");
+      toast({
+        title: "Something went wrong.",
+        description: "Your bio was not updated. Please try again.",
+        variant: "destructive",
+      })
     },
     onSuccess: (newBio) => {
 
@@ -158,7 +161,10 @@ export default function EditBioPage({ username }: { username: string }) {
       if (newBio?.username) {
         router.push(`/bios/${newBio.username}`); // Adjust route as necessary
       }
-      toast.success("Link In Bio updated successfully!");
+      toast({
+        title: "Bio updated.",
+        description: "Your bio has been updated.",
+      })
     },
     onSettled: () => {
       // Ensure data consistency
@@ -193,7 +199,7 @@ export default function EditBioPage({ username }: { username: string }) {
               Username   </span>
               <small className="text-blue-500 text-sm my-1">Updated {bio?.update_no}/2</small>
             </Label>
-            <Input id="name" placeholder="Enter username" {...register("username")} disabled={bio?.update_no >= 2}/>
+            <Input id="name" placeholder="Enter username" {...register("username")} disabled={bio?.update_no >= 2} />
             {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
           </div>
           <div className="space-y-2">

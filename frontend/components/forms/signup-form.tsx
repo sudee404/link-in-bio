@@ -11,8 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
 import axios from "axios";
 import { signIn, useSession } from "next-auth/react";
-import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 export function SignUpForm() {
   const { status } = useSession()
@@ -54,7 +54,11 @@ export function SignUpForm() {
     await axios
       .post("/api/auth/register", formData)
       .then((res) => {
-        toast.success("Account created successfully");
+        toast({
+          title: "Account created successfully",
+          description: "Redirecting...",
+          duration: 3000,
+        })
         // signIn 
         signIn("django-provider", {
           email: data.email,
@@ -64,8 +68,12 @@ export function SignUpForm() {
         });
       })
       .catch((err) => {
-        Object.entries(err?.response?.data?.errors || {}).forEach(([key, value]) => {
-          toast.error(`${key}: ${value}`);
+        Object.entries(err?.response?.data || {}).forEach(([key, value]) => {
+         toast({
+          title:`${key}`,
+          description: `${value}`,
+          variant: "destructive",
+         })
         });
         console.log(err);
       })

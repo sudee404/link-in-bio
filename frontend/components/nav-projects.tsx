@@ -42,7 +42,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { Fragment, useState } from "react"
 import axios from "axios"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "react-toastify"
+import { toast } from "@/hooks/use-toast"
 
 export function NavProjects({
   projects, user
@@ -91,11 +91,18 @@ export function NavProjects({
     onError: (err, username, context) => {
       // Rollback to the previous state
       queryClient.setQueryData(["user-profile"], context?.previousUser);
-      toast.error("Error deleting Link In Bio!");
+      toast({
+        title: "Error deleting bio",
+        description: "There was an error deleting the bio. Please try again.",
+        variant: "destructive",
+      });
     },
     onSuccess: () => {
       // Optionally show a success message
-      toast.success("Link In Bio deleted successfully!");
+      toast({
+        title: "Bio deleted",
+        description: "Your bio has been deleted.",
+      });
       setOpen('')
     },
     onSettled: () => {

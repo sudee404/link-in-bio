@@ -2,7 +2,6 @@ import { Inter } from "next/font/google";
 import { AOSInit } from "@/components/aos-init";
 import Providers from "./providers";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import { Suspense } from "react";
 import Loader from "@/components/ui/loader";

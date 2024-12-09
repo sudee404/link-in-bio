@@ -7,7 +7,7 @@ import Link from "next/link"
 import BioView from "@/components/sections/BioView"
 import { UserContextContext } from "@/context/UserContext"
 import axios from "axios"
-import { toast } from "react-toastify"
+import { toast } from "@/hooks/use-toast"
 
 export default function PreviewPage({ username }: { username: any }) {
   const router = useRouter()
@@ -24,12 +24,20 @@ export default function PreviewPage({ username }: { username: any }) {
         "Content-Type": "multipart/form-data",
       },
     }).then((res) => {
-      toast.success("Bio published successfully")
+      toast({
+        title: "Bio published",
+        description: "Your bio has been published successfully",
+        duration: 3000,
+      })
       router.push(`/${username}`)
 
     }).catch((err) => {
-      toast.error("Error publishing bio")
-      console.log(err)
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        duration: 3000,
+        variant: "destructive",
+      })
     }).finally(() => {
       setIsPublishing(false)
     })

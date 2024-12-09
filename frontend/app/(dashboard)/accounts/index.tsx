@@ -1,10 +1,10 @@
 "use client";
 import PasswordUpdate from "@/components/forms/password-update";
 import { UserContextContext } from "@/context/UserContext";
+import { toast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useContext, useState, useEffect } from "react";
-import { toast } from "react-toastify";
 
 export default function ProfilePage() {
   const { user: contextData } = useContext(UserContextContext);
@@ -29,11 +29,20 @@ export default function ProfilePage() {
     const formData = { ...rest };
 
     await axios.post("/api/auth/profile", formData).then((res) => {
-      toast.success("Profile updated successfully");
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully",
+        duration: 3000,
+      })
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
     }).catch((err) => {
       console.log(err);
-      toast.error(err.message);
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        duration: 3000,
+        variant: "destructive",
+      })
     }).finally(() => {
       setSaving(false);
     });

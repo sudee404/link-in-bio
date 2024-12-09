@@ -1,11 +1,11 @@
 'use client'
 
 import Loader from '@/components/ui/loader';
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { toast } from '@/hooks/use-toast';
+import {  useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify';
 
 export default function BusinessSettingsPage() {
   const { data: session } = useSession()
@@ -44,11 +44,20 @@ export default function BusinessSettingsPage() {
     const formData = { ...rest };
 
     await axios.post("/api/auth/business", formData).then((res) => {
-      toast.success("Business updated successfully");
+      toast({
+        title: "Business updated",
+        description: "Your business has been updated successfully",
+        duration: 3000,
+      })
       queryClient.invalidateQueries({ queryKey: ["user-business"] });
     }).catch((err) => {
       console.log(err);
-      toast.error(err.message);
+      toast({
+        title: "Error",
+        description: err?.message,
+        duration: 3000,
+        variant: "destructive",
+      })
     }).finally(() => {
       setSaving(false);
     });

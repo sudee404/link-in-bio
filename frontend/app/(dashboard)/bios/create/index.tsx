@@ -22,10 +22,9 @@ import {
   SelectLabel,
 } from "@/components/ui/select";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
 import { UserContextContext } from "@/context/UserContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
 
 // Define Zod Schema
 
@@ -159,7 +158,11 @@ export default function CreateBioPage() {
     onError: (err, newBio, context) => {
       // Rollback to the previous state
       queryClient.setQueryData(["user-profile"], context?.previousUser);
-      toast.error("Error creating Link In Bio!");
+      toast({
+        title: "Error creating bio",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
     },
     onSuccess: (newBio) => {
       // Update the query with the new bio data returned from the server
@@ -178,7 +181,11 @@ export default function CreateBioPage() {
       if (newBio?.username) {
         router.push(`/bios/${newBio.username}`); // Adjust route as necessary
       }
-      toast.success("Link In Bio created successfully!");
+      toast({
+        title: "Bio created successfully",
+        description: "Your bio has been created successfully.",
+        variant: "default",
+      })
     },
     onSettled: () => {
       // Ensure data consistency
