@@ -39,10 +39,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Fragment, useState } from "react"
+import { Fragment, useContext, useState } from "react"
 import axios from "axios"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "@/hooks/use-toast"
+import { UserContextContext } from "@/context/UserContext"
 
 export function NavProjects({
   projects, user
@@ -69,10 +70,10 @@ export function NavProjects({
     onMutate: async (username) => {
       // Cancel any outgoing refetches for 'user-profile'
       await queryClient.cancelQueries({ queryKey: ["user-profile"] });
-  
+
       // Snapshot the previous value
       const previousUser = queryClient.getQueryData(["user-profile"]);
-  
+
       // Optimistically update to remove the bio
       queryClient.setQueryData(["user-profile"], (old: any) => {
         if (!old?.user) return old;
@@ -84,7 +85,7 @@ export function NavProjects({
           },
         };
       });
-  
+
       // Return the context for rollback
       return { previousUser };
     },
@@ -110,7 +111,7 @@ export function NavProjects({
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
     },
   });
-  
+
   const handleDelete = async () => {
     setDeleting(true);
     deleteMutation.mutate(open, {
@@ -119,7 +120,7 @@ export function NavProjects({
       },
     });
   };
-  
+
 
   return (
     <Fragment>
@@ -164,11 +165,15 @@ export function NavProjects({
               </DropdownMenu>
             </SidebarMenuItem>
           ))}
-          {user?.account_type === 'business' && <SidebarMenuItem>
+          {user?.account_type === 'business' ? <SidebarMenuItem>
             <SidebarMenuButton className="text-sidebar-foreground/70">
               <Link href="/bios/create">Create New</Link>
             </SidebarMenuButton>
-          </SidebarMenuItem>}
+          </SidebarMenuItem> : user?.bios?.length < 2 ? <SidebarMenuItem>
+            <SidebarMenuButton className="text-sidebar-foreground/70">
+              <Link href="/bios/create">Create New</Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem> : null}
         </SidebarMenu>
       </SidebarGroup>
       <Dialog open={!!open} onOpenChange={(open) => open ? null : setOpen('')}>

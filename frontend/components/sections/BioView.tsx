@@ -63,7 +63,7 @@ export default function BioView({ bio: bio }: { bio: any }) {
 
       {/* Scrollable Right Content */}
       <div className="md:h-screen  overflow-y-scroll col-span-2 py-5 no-scrollbar">
-        <div className=" flex items-center">
+        <div className=" flex items-center px-5">
           {!!selected ? <LinkDetail link={selected} setSelected={setSelected}/> : <div className="mt-5">
             {bio?.links?.length ? <div className="flex flex-wrap gap-5 my-20">
               {bio?.links?.map((link: any) => (

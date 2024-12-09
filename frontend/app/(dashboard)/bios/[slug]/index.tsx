@@ -55,9 +55,13 @@ export default function PreviewPage({ username }: { username: any }) {
                 Edit
               </Button>
             </Link>
-            <Button onClick={handlePublish} disabled={isPublishing}>
+           {!bio.published ? <Button disabled={isPublishing} onClick={handlePublish}>
               {isPublishing ? "Publishing..." : "Publish"}
+            </Button> : <Link href={`/${username}`}>
+            <Button className="bg-green-500 hover:bg-green-600 text-white font-bold px-4 rounded">
+              Public View
             </Button>
+            </Link>}
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
